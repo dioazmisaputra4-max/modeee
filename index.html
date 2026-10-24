@@ -85,6 +85,13 @@ body{margin:0;background:#0d0e13;color:var(--white);font-family:-apple-system,Bl
 .toast.show{display:block;animation:slide .25s ease-out}
 @keyframes slide{from{transform:translateY(-12px);opacity:0}to{transform:translateY(0);opacity:1}}
 @media(max-height:650px){.phone{min-height:0;height:calc(100dvh - 20px)}.lock-time{top:95px;font-size:65px}.lock-date{top:78px}.lock-sub{top:175px}.notif{top:235px}.home-indicator{bottom:3px}}
+
+.pin-overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;flex-direction:column;padding:55px 25px 35px;background:linear-gradient(145deg,rgba(255,220,233,.98),rgba(242,168,194,.98));color:#8f3c5a;text-shadow:none}
+.pin-overlay.show{display:flex}.pin-title{font-size:19px;font-weight:700;margin:8px 0 5px}.pin-sub{font-size:12px;opacity:.8;margin-bottom:20px}
+.pin-dots{display:flex;gap:13px;margin:0 0 24px}.pin-dot{width:12px;height:12px;border:1.5px solid #a64d6b;border-radius:50%;background:transparent}.pin-dot.filled{background:#a64d6b}
+.pin-pad{display:grid;grid-template-columns:repeat(3,64px);gap:12px}.pin-key{height:58px;border:1px solid #ffffffa8;border-radius:50%;background:#ffffff8c;color:#803650;font-size:22px;font-weight:600;cursor:pointer}.pin-key:active{background:#fff}.pin-key.empty{visibility:hidden}
+.pin-error{height:18px;margin-top:13px;font-size:12px;color:#9e2347}.pin-cancel{position:absolute;bottom:30px;left:0;right:0;border:0;background:none;color:#8f3c5a;font-size:14px;cursor:pointer}
+
 </style>
 </head>
 <body>
@@ -101,8 +108,20 @@ body{margin:0;background:#0d0e13;color:var(--white);font-family:-apple-system,Bl
       <strong>Alex 💬</strong><p>Kamu udah sampai rumah belum?</p>
     </div>
     <div class="lock-bottom"><button class="round-btn" onclick="toast('Kamera','Fitur kamera hanya simulasi 📸')">📷</button><button class="round-btn" onclick="toast('Senter','Senter dinyalakan (simulasi) 🔦')">🔦</button></div>
-    <div class="unlock" onclick="goHome()">Ketuk untuk membuka</div>
+    <div class="unlock" onclick="showPin()">Ketuk untuk membuka · PIN 0707</div>
   </section>
+
+
+<section class="pin-overlay" id="pinOverlay" aria-label="Masukkan PIN">
+<div style="font-size:36px;margin-bottom:8px">🔒</div><div class="pin-title">Masukkan Kode Sandi</div>
+<div class="pin-sub">Masukkan PIN untuk membuka iPhone</div>
+<div class="pin-dots" id="pinDots"><span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span><span class="pin-dot"></span></div>
+<div class="pin-pad">
+<button class="pin-key" onclick="pressPin('1')">1</button><button class="pin-key" onclick="pressPin('2')">2</button><button class="pin-key" onclick="pressPin('3')">3</button>
+<button class="pin-key" onclick="pressPin('4')">4</button><button class="pin-key" onclick="pressPin('5')">5</button><button class="pin-key" onclick="pressPin('6')">6</button>
+<button class="pin-key" onclick="pressPin('7')">7</button><button class="pin-key" onclick="pressPin('8')">8</button><button class="pin-key" onclick="pressPin('9')">9</button>
+<button class="pin-key empty" aria-hidden="true"></button><button class="pin-key" onclick="pressPin('0')">0</button><button class="pin-key" onclick="deletePin()">⌫</button>
+</div><div class="pin-error" id="pinError"></div><button class="pin-cancel" onclick="closePin()">Batal</button></section>
 
   <section class="screen" id="home">
     <div class="welcome">Halo, kamu ✨</div><div class="home-date" id="homeDate">Sabtu, 24 Oktober</div>
@@ -218,8 +237,15 @@ function toast(title,msg){document.getElementById('toastTitle').textContent=titl
 function timeNow(){const d=new Date();return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false})}
 function updateClock(){let d=new Date(),t=timeNow();document.getElementById('statusTime').textContent=t;document.getElementById('lockTime').textContent=t;document.getElementById('settingsClock').textContent=t;let date=d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});document.getElementById('lockDate').textContent=date;document.getElementById('homeDate').textContent=date}
 updateClock();setInterval(updateClock,15000);
-function goUnlock(){goHome()}
-document.getElementById('lock').addEventListener('click',e=>{if(!e.target.closest('.notif')&&!e.target.closest('.round-btn'))goUnlock()});
+let enteredPin='';
+function showPin(){enteredPin='';updatePinDots();document.getElementById('pinError').textContent='';document.getElementById('pinOverlay').classList.add('show')}
+function closePin(){document.getElementById('pinOverlay').classList.remove('show');enteredPin='';updatePinDots()}
+function updatePinDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<enteredPin.length))}
+function pressPin(n){if(enteredPin.length>=4)return;enteredPin+=n;updatePinDots();if(enteredPin.length===4){if(enteredPin==='0707'){document.getElementById('pinError').textContent='Berhasil dibuka 💗';setTimeout(()=>{document.getElementById('pinOverlay').classList.remove('show');goHome();enteredPin='';updatePinDots()},350)}else{document.getElementById('pinError').textContent='PIN salah, coba lagi';setTimeout(()=>{enteredPin='';updatePinDots()},650)}}}
+function deletePin(){enteredPin=enteredPin.slice(0,-1);updatePinDots();document.getElementById('pinError').textContent=''}
+function goUnlock(){showPin()}
+document.getElementById('lock').addEventListener('click',e=>{if(!e.target.closest('.notif')&&!e.target.closest('.round-btn')&&!e.target.closest('.unlock'))showPin()});
+document.addEventListener('keydown',e=>{if(!document.getElementById('pinOverlay').classList.contains('show'))return;if(/^[0-9]$/.test(e.key))pressPin(e.key);else if(e.key==='Backspace')deletePin();else if(e.key==='Escape')closePin()});
 const wall=document.getElementById('chatWall');
 let messages=[{who:'them',text:'Kamu udah sampai rumah belum?',time:'19:40'},{who:'me',text:'Sebentar lagi. Kenapa, Alex?',time:'19:41'},{who:'them',text:'Nggak apa-apa kok. Cuma mau mastiin aja 😅',time:'19:41'}];
 function addBubble(who,text,time=timeNow()){let b=document.createElement('div');b.className='bubble '+who;b.textContent=text;let tm=document.createElement('span');tm.className='time';tm.textContent=time;b.appendChild(tm);wall.appendChild(b);wall.scrollTop=wall.scrollHeight;messages.push({who,text,time})}
