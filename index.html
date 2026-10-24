@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#171923">
+<title>AU — After School</title>
+<style>
+:root{
+  --wallpaper: linear-gradient(145deg,#f9d5e5 0%,#d6d8ff 48%,#b8e8e5 100%);
+  --ink:#171923; --glass:rgba(255,255,255,.24); --white:#fff;
+  --accent:#ff6e9c; --bubble-me:#d9fdd3; --bubble-them:#fff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#0d0e13;color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100dvh;display:grid;place-items:center;padding:16px}
+.phone{width:min(100%,390px);height:min(844px, calc(100dvh - 32px));min-height:600px;border:8px solid #252630;border-radius:48px;overflow:hidden;position:relative;background:var(--wallpaper);box-shadow:0 25px 80px #0008}
+.status{position:absolute;top:0;left:0;right:0;height:42px;padding:13px 25px 0;display:flex;justify-content:space-between;align-items:center;color:white;font-weight:700;font-size:12px;z-index:5;text-shadow:0 1px 4px #0005}
+.status .right{letter-spacing:2px}
+.screen{position:absolute;inset:0;display:none;color:var(--ink)}
+.screen.active{display:block}
+#lock{background:var(--wallpaper);color:#fff;text-shadow:0 2px 15px #0003}
+.lock-date{position:absolute;top:105px;width:100%;text-align:center;font-size:16px;font-weight:500}
+.lock-time{position:absolute;top:125px;width:100%;text-align:center;font-size:76px;font-weight:250;letter-spacing:-4px}
+.lock-sub{position:absolute;top:215px;width:100%;text-align:center;font-size:13px}
+.notif{position:absolute;top:285px;left:16px;right:16px;border-radius:20px;background:rgba(255,255,255,.28);backdrop-filter:blur(20px);padding:13px 14px;color:#fff;text-shadow:none;box-shadow:0 8px 25px #0001;border:1px solid #ffffff55;cursor:pointer}
+.notif-head{display:flex;gap:8px;align-items:center;font-size:11px;opacity:.9;text-transform:uppercase;letter-spacing:.5px}
+.app-icon{width:25px;height:25px;border-radius:7px;background:#28c76f;display:grid;place-items:center;color:white;font-size:14px}
+.notif strong{display:block;font-size:14px;margin-top:6px}.notif p{margin:3px 0 0;font-size:13px}
+.lock-bottom{position:absolute;bottom:34px;left:0;right:0;display:flex;justify-content:space-around;align-items:center}
+.round-btn{width:45px;height:45px;border-radius:50%;background:#ffffff30;backdrop-filter:blur(12px);display:grid;place-items:center;border:1px solid #ffffff55;font-size:20px;cursor:pointer}
+.unlock{position:absolute;bottom:12px;width:100%;text-align:center;font-size:11px;opacity:.9;letter-spacing:.3px}
+.home-indicator{position:absolute;bottom:5px;left:calc(50% - 54px);width:108px;height:4px;border-radius:10px;background:#fff;opacity:.9;z-index:10;cursor:pointer}
+#home{background:var(--wallpaper);padding:58px 20px 35px}
+.welcome{color:#fff;text-shadow:0 1px 5px #0003;font-size:25px;font-weight:700;margin:8px 0 5px}
+.home-date{color:#fff;text-shadow:0 1px 5px #0003;font-size:13px;margin-bottom:24px}
+.widgets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.widget{background:#ffffff45;backdrop-filter:blur(14px);border:1px solid #ffffff55;border-radius:18px;padding:12px;color:#20202b;min-height:82px}
+.widget small{font-size:10px;opacity:.7}.widget strong{display:block;margin-top:6px;font-size:17px}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px}
+.app{border:0;background:none;color:#fff;text-shadow:0 1px 5px #0005;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;cursor:pointer}
+.app .tile{width:54px;height:54px;border-radius:15px;display:grid;place-items:center;font-size:26px;box-shadow:0 5px 12px #0002;text-shadow:none}
+.whatsapp{background:#25d366}.instagram{background:linear-gradient(135deg,#ffd776,#fa3e74,#8b4bdb)}.messages{background:#4aa9ff}.photos{background:#fff;color:#ff6593}.notes{background:#ffe68a;color:#695500}.story{background:#5e5bd6}.settings{background:#727985}.phoneapp{background:#25bf75}
+.dock{position:absolute;bottom:24px;left:16px;right:16px;border-radius:25px;background:#ffffff4d;backdrop-filter:blur(18px);padding:10px;display:flex;justify-content:space-around}
+.dock .tile{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:24px}
+.appscreen{background:#f7f7fb;color:#161722;padding-top:48px}
+.appbar{height:48px;display:flex;align-items:center;padding:0 15px;gap:12px;border-bottom:1px solid #0000000d;background:#ffffffed;font-weight:700}
+.back{border:0;background:none;color:#1686ff;font-size:15px;cursor:pointer;padding:7px 0}
+.appbody{height:calc(100% - 96px);overflow:auto}
+.chat-head{display:flex;align-items:center;gap:10px;padding:10px 15px;background:#f7f7fb;border-bottom:1px solid #ddd}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#f7bfd5;color:#7d284b;font-weight:700;flex-shrink:0}
+.chat-head strong{font-size:14px}.chat-head small{display:block;color:#777;font-size:11px;margin-top:2px}
+.chat-wall{height:calc(100% - 110px);overflow:auto;padding:14px 10px;background:#e8e2d9;background-image:radial-gradient(#fff9 1px,transparent 1px);background-size:18px 18px}
+.date-pill{width:max-content;margin:0 auto 14px;background:#fff9;border-radius:8px;padding:5px 10px;font-size:10px;color:#666}
+.bubble{max-width:82%;width:max-content;padding:9px 10px 6px;border-radius:13px;margin:7px 0;font-size:13px;line-height:1.35;box-shadow:0 1px 1px #0001;overflow-wrap:anywhere}
+.bubble.them{background:var(--bubble-them);border-top-left-radius:4px;color:#222}
+.bubble.me{background:var(--bubble-me);border-top-right-radius:4px;color:#222;margin-left:auto}
+.bubble .time{display:block;text-align:right;font-size:9px;color:#777;margin-top:4px}
+.typing{font-size:11px;color:#888;padding:5px 12px}
+.chat-compose{height:52px;display:flex;gap:7px;align-items:center;padding:7px;background:#f7f7fb}
+.chat-compose input{flex:1;min-width:0;border:0;border-radius:20px;padding:11px 13px;background:white;outline:none;font-size:13px}
+.send{border:0;background:#24b86b;color:white;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer}
+.ig-body{padding:12px;background:white;height:100%;overflow:auto}
+.ig-top{display:flex;justify-content:space-between;font-weight:800;font-size:21px;padding:5px 0 15px}
+.post{border:1px solid #eee;border-radius:14px;overflow:hidden;margin-bottom:18px}
+.post-head{display:flex;align-items:center;gap:8px;padding:10px;font-size:12px;font-weight:700}
+.post-art{height:230px;display:grid;place-items:center;text-align:center;padding:25px;background:linear-gradient(135deg,#f9c8dd,#d8d9ff,#b8e7d9);font-size:45px}
+.post-art span{display:block;font-size:14px;color:#343044;font-weight:600;margin-top:10px}
+.post-copy{padding:10px;font-size:12px;line-height:1.5}
+.post-actions{display:flex;gap:12px;padding:0 10px 8px;font-size:20px;cursor:pointer}
+.profile{padding:18px;background:white;height:100%;overflow:auto}
+.profile-top{display:flex;align-items:center;gap:15px;margin:12px 0 20px}
+.profile .avatar{width:70px;height:70px;font-size:25px}
+.profile p{font-size:13px;line-height:1.5}
+.note-list{padding:14px}.note-card{padding:14px;background:#fff5bd;border-radius:12px;margin-bottom:10px;font-size:13px;line-height:1.5}
+.settings-list{padding:12px}.setting-row{padding:15px;background:white;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.setting-row input{width:100px;border:0;border-bottom:1px solid #ddd;padding:5px}
+.story-body{padding:18px;background:#171923;color:#fff;height:100%;overflow:auto}
+.episode-tag{color:#ff9fbe;font-size:11px;letter-spacing:1px;font-weight:800}
+.story-body h2{font-size:25px;line-height:1.15;margin:10px 0}
+.story-body p{font-size:14px;line-height:1.7;color:#e8e8ee}
+.choice{display:block;width:100%;padding:13px;margin-top:10px;border-radius:13px;border:1px solid #ffffff35;background:#ffffff12;color:white;text-align:left;font-size:13px;cursor:pointer}
+.choice:hover{background:#ffffff25}
+.toast{position:absolute;top:48px;left:12px;right:12px;padding:12px 14px;border-radius:15px;background:#fff;color:#222;box-shadow:0 8px 30px #0002;z-index:8;display:none;font-size:12px;cursor:pointer}
+.toast strong{display:block;margin-bottom:3px}
+.toast.show{display:block;animation:slide .25s ease-out}
+@keyframes slide{from{transform:translateY(-12px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-height:650px){.phone{min-height:0;height:calc(100dvh - 20px)}.lock-time{top:95px;font-size:65px}.lock-date{top:78px}.lock-sub{top:175px}.notif{top:235px}.home-indicator{bottom:3px}}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <div class="status"><span id="statusTime">9:41</span><span class="right">●●● ▰</span></div>
+  <div class="toast" id="toast" onclick="openApp('chat')"><strong id="toastTitle">Pesan baru</strong><span id="toastText">Kamu udah pulang?</span></div>
+
+  <section class="screen active" id="lock">
+    <div class="lock-date" id="lockDate">Sabtu, 24 Oktober</div>
+    <div class="lock-time" id="lockTime">19:41</div>
+    <div class="lock-sub">Sabtu yang terasa berbeda ✨</div>
+    <div class="notif" onclick="openApp('chat')">
+      <div class="notif-head"><div class="app-icon">☎</div> WHATSAPP <span style="margin-left:auto">sekarang</span></div>
+      <strong>Alex 💬</strong><p>Kamu udah sampai rumah belum?</p>
+    </div>
+    <div class="lock-bottom"><button class="round-btn" onclick="toast('Kamera','Fitur kamera hanya simulasi 📸')">📷</button><button class="round-btn" onclick="toast('Senter','Senter dinyalakan (simulasi) 🔦')">🔦</button></div>
+    <div class="unlock" onclick="goHome()">Ketuk untuk membuka</div>
+  </section>
+
+  <section class="screen" id="home">
+    <div class="welcome">Halo, kamu ✨</div><div class="home-date" id="homeDate">Sabtu, 24 Oktober</div>
+    <div class="widgets">
+      <div class="widget"><small>NOW PLAYING ♫</small><strong>our little story</strong><small>playlist for you</small></div>
+      <div class="widget"><small>UP NEXT</small><strong>💌 1 pesan</strong><small>Dari Alex</small></div>
+    </div>
+    <div class="apps">
+      <button class="app" onclick="openApp('chat')"><span class="tile whatsapp">☎</span>WhatsApp</button>
+      <button class="app" onclick="openApp('instagram')"><span class="tile instagram">◎</span>Instagram</button>
+      <button class="app" onclick="openApp('messages')"><span class="tile messages">💬</span>Messages</button>
+      <button class="app" onclick="openApp('photos')"><span class="tile photos">🌈</span>Photos</button>
+      <button class="app" onclick="openApp('notes')"><span class="tile notes">📝</span>Notes</button>
+      <button class="app" onclick="openApp('story')"><span class="tile story">📖</span>AU Story</button>
+      <button class="app" onclick="openApp('profile')"><span class="tile settings">👤</span>Karakter</button>
+      <button class="app" onclick="openApp('settings')"><span class="tile settings">⚙️</span>Settings</button>
+    </div>
+    <div class="dock">
+      <button class="app" onclick="openApp('chat')"><span class="tile whatsapp">☎</span></button>
+      <button class="app" onclick="openApp('instagram')"><span class="tile instagram">◎</span></button>
+      <button class="app" onclick="openApp('photos')"><span class="tile photos">🌈</span></button>
+      <button class="app" onclick="openApp('story')"><span class="tile story">📖</span></button>
+    </div>
+  </section>
+
+  <section class="screen appscreen" id="chat">
+    <div class="appbar"><button class="back" onclick="goHome()">‹ Home</button><span>WhatsApp</span></div>
+    <div class="chat-head"><div class="avatar">A</div><div><strong>Alex Pratama</strong><small>online</small></div><span style="margin-left:auto;color:#1686ff">☎　▣</span></div>
+    <div class="chat-wall" id="chatWall"><div class="date-pill">HARI INI</div></div>
+    <div class="typing" id="typing" style="display:none">Alex sedang mengetik...</div>
+    <form class="chat-compose" id="chatForm"><input id="chatInput" placeholder="Ketik pesan..." autocomplete="off"><button class="send" type="submit">➤</button></form>
+  </section>
+
+  <section class="screen appscreen" id="instagram">
+    <div class="appbar"><button class="back" onclick="goHome()">‹ Home</button><span>Instagram</span></div>
+    <div class="appbody ig-body">
+      <div class="ig-top"><span>instaAU</span><span>♡　＋</span></div>
+      <div class="post">
+        <div class="post-head"><div class="avatar">A</div> alex.pratama <span style="margin-left:auto">•••</span></div>
+        <div class="post-art">🌇<span>after school, before sunset</span></div>
+        <div class="post-actions"><span onclick="likePost(this)">♡</span><span onclick="toast('Komentar','Tulis komentar di DM Alex 💬')">♧</span><span>➤</span></div>
+        <div class="post-copy"><strong>alex.pratama</strong> Hari ini lumayan seru. Apalagi pas pulang bareng seseorang 👀<br><span style="color:#888">Lihat semua 18 komentar</span></div>
+      </div>
+      <div class="post">
+        <div class="post-head"><div class="avatar" style="background:#c6e7db">K</div> kamu.diary <span style="margin-left:auto">•••</span></div>
+        <div class="post-art" style="background:linear-gradient(135deg,#ffdfb5,#f5cde7)">📚☕<span>little moments matter</span></div>
+        <div class="post-actions"><span onclick="likePost(this)">♡</span><span>♧</span><span>➤</span></div>
+        <div class="post-copy"><strong>kamu.diary</strong> capek sekolah, tapi hari ini ada cerita baru.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen appscreen" id="messages">
+    <div class="appbar"><button class="back" onclick="goHome()">‹ Home</button><span>Messages</span></div>
+    <div class="appbody" style="padding:14px">
+      <div style="padding:14px;background:white;border-radius:14px;display:flex;gap:12px;align-items:center;cursor:pointer" onclick="openApp('chat')"><div class="avatar">A</div><div><strong style="font-size:14px">Alex Pratama</strong><p style="font-size:12px;color:#777;margin:5px 0">Kamu udah sampai rumah belum?</p></div><span style="margin-left:auto;color:#888">19:40</span></div>
+      <p style="font-size:12px;color:#888;text-align:center;margin-top:25px">Ketuk percakapan untuk membukanya.</p>
+    </div>
+  </section>
+
+  <section class="screen appscreen" id="photos">
+    <div class="appbar"><button class="back" onclick="goHome()">‹ Home</button><span>Photos</span></div>
+    <div class="appbody" style="padding:14px">
+      <h3 style="margin:4px 0 12px">Kenangan ✨</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="post-art" style="height:150px;border-radius:12px;font-size:35px">🌇</div><div class="post-art" style="height:150px;border-radius:12px;font-size:35px;background:linear-gradient(135deg,#f9c8dd,#d8d9ff)">📚</div><div class="post-art" style="height:150px;border-radius:12px;font-size:35px;background:linear-gradient(135deg,#c8f1dc,#d8d9ff)">🌷</div><div class="post-art" style="height:150px;border-radius:12px;font-size:35px;background:linear-gradient(135deg,#ffdfb5,#f5cde7)">☁️</div></div>
+      <p style="font-size:12px;color:#777">Foto-foto ilustrasi untuk cerita AU.</p>
+    </div>
+  </section>
+
+  <section class="screen appscreen" id="notes">
+    <div class="appbar"><button class="back" onclick="goHome()">‹ Home</button><span>Notes</span></div>
+    <div class="appbody note-list"><div class="note-card"><strong>to do after school 🌷</strong><br>☑ pulang bareng teman<br>☐ kerjakan PR matematika<br>☐ balas chat Alex<br>☐ cari tahu kenapa dia senyum tadi...</div><div class="note-card"><strong>draft pesan</strong><br>“makasih ya buat hari ini. besok ketemu lagi?”</div></div>
+  </section>
+
+  <section class="screen appscreen" id="profile">
+    <div class="appbar"><button class="back" onclick="goHome()">‹ Home</button><span>Karakter AU</span></div>
+    <div class="appbody profile"><div class="profile-top"><div class="avatar">A</div><div><h2 style="margin:0 0 5px">Alex Pratama</h2><span style="font-size:12px;color:#777">16 tahun · teman sekelas</span></div></div><p><strong>Kepribadian:</strong> santai, suka bercanda, perhatian diam-diam.</p><p><strong>Kesukaan:</strong> basket, senja, playlist mellow.</p><p><strong>Hubungan dengan kamu:</strong> teman sekelas yang akhir-akhir ini jadi sering menghubungi kamu.</p><button class="choice" style="background:#f7e5ee;color:#49293b;border-color:#f7e5ee" onclick="openApp('chat')">Buka chat Alex 💬</button></div>
+  </section>
+
+  <section class="screen appscreen" id="settings">
+    <div class="appbar"><button class="back" onclick="goHome()">‹ Home</button><span>Settings</span></div>
+    <div class="appbody settings-list">
+      <div class="setting-row"><span>Nama kamu</span><input id="nameInput" value="Kamu" maxlength="20" aria-label="Nama kamu"></div>
+      <div class="setting-row"><span>Wallpaper</span><select id="wallpaperSelect"><option value="pastel">Pastel dream</option><option value="sunset">Sunset glow</option><option value="night">Midnight blue</option><option value="rose">Rose garden</option></select></div>
+      <div class="setting-row"><span>Jam lock screen</span><strong id="settingsClock">19:41</strong></div>
+      <button class="choice" style="background:#e7e8ff;color:#27264b;border-color:#e7e8ff" onclick="saveSettings()">Simpan pengaturan</button>
+      <p style="font-size:11px;color:#777;line-height:1.5">Pengaturan dan progres cerita tersimpan di browser perangkat ini.</p>
+    </div>
+  </section>
+
+  <section class="screen appscreen" id="story">
+    <div class="appbar"><button class="back" onclick="goHome()">‹ Home</button><span>AU Story</span></div>
+    <div class="appbody story-body" id="storyBody">
+      <div class="episode-tag">EPISODE 01 · AFTER SCHOOL</div>
+      <h2>Pesan setelah bel pulang</h2>
+      <p>Bel pulang baru saja berbunyi. Kamu sedang memasukkan buku ke dalam tas ketika ponselmu bergetar.</p>
+      <p><strong>Alex:</strong> “Kamu udah sampai rumah belum?”</p>
+      <p>Kalian tadi pulang hampir bersamaan. Tapi ada sesuatu dari cara Alex melambaikan tangan yang membuatmu kepikiran sampai sekarang.</p>
+      <p><strong>Kamu mau membalas apa?</strong></p>
+      <button class="choice" onclick="chooseStory(1)">“Belum, masih di jalan. Kenapa?”</button>
+      <button class="choice" onclick="chooseStory(2)">“Udah kok. Kamu sendiri?”</button>
+      <button class="choice" onclick="chooseStory(3)">Baca pesan, lalu pura-pura sibuk.</button>
+    </div>
+  </section>
+  <div class="home-indicator" onclick="goHome()" title="Kembali ke Home"></div>
+</div>
+<script>
+const screens=[...document.querySelectorAll('.screen')];
+function showScreen(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));document.getElementById('toast').classList.remove('show');}
+function goHome(){showScreen('home')}
+function openApp(id){showScreen(id);if(id==='chat')document.getElementById('chatInput').focus({preventScroll:true});}
+function toast(title,msg){document.getElementById('toastTitle').textContent=title;document.getElementById('toastText').textContent=msg;document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),5000)}
+function timeNow(){const d=new Date();return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false})}
+function updateClock(){let d=new Date(),t=timeNow();document.getElementById('statusTime').textContent=t;document.getElementById('lockTime').textContent=t;document.getElementById('settingsClock').textContent=t;let date=d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});document.getElementById('lockDate').textContent=date;document.getElementById('homeDate').textContent=date}
+updateClock();setInterval(updateClock,15000);
+function goUnlock(){goHome()}
+document.getElementById('lock').addEventListener('click',e=>{if(!e.target.closest('.notif')&&!e.target.closest('.round-btn'))goUnlock()});
+const wall=document.getElementById('chatWall');
+let messages=[{who:'them',text:'Kamu udah sampai rumah belum?',time:'19:40'},{who:'me',text:'Sebentar lagi. Kenapa, Alex?',time:'19:41'},{who:'them',text:'Nggak apa-apa kok. Cuma mau mastiin aja 😅',time:'19:41'}];
+function addBubble(who,text,time=timeNow()){let b=document.createElement('div');b.className='bubble '+who;b.textContent=text;let tm=document.createElement('span');tm.className='time';tm.textContent=time;b.appendChild(tm);wall.appendChild(b);wall.scrollTop=wall.scrollHeight;messages.push({who,text,time})}
+messages.forEach(m=>{let b=document.createElement('div');b.className='bubble '+m.who;b.textContent=m.text;let tm=document.createElement('span');tm.className='time';tm.textContent=m.time;b.appendChild(tm);wall.appendChild(b)});
+document.getElementById('chatForm').addEventListener('submit',e=>{e.preventDefault();let input=document.getElementById('chatInput'),text=input.value.trim();if(!text)return;addBubble('me',text);input.value='';document.getElementById('typing').style.display='block';setTimeout(()=>{document.getElementById('typing').style.display='none';let replies=['Hehe, cuma nanya aja kok 😄','Ohh, hati-hati ya sampai rumah!','Besok berangkat bareng, mau?','Tadi aku mau ngomong sesuatu, tapi lupa 😅','Oke deh, kabarin kalau udah sampai ya.'];let reply=replies[Math.floor(Math.random()*replies.length)];addBubble('them',reply);toast('Alex · WhatsApp',reply)},1000+Math.random()*900)});
+function likePost(el){el.textContent=el.textContent==='♡'?'♥':'♡';el.style.color=el.textContent==='♥'?'#f44':'inherit'}
+function chooseStory(n){let body=document.getElementById('storyBody');let txt='';
+if(n===1)txt='<p><strong>Kamu:</strong> “Belum, masih di jalan. Kenapa?”</p><p><strong>Alex:</strong> “Mau nemenin sampai rumah, tapi kayaknya aku telat nanya.”</p><p>Kamu tersenyum kecil membaca pesannya. Ternyata, dia juga memikirkan perjalanan pulangmu.</p>';
+if(n===2)txt='<p><strong>Kamu:</strong> “Udah kok. Kamu sendiri?”</p><p><strong>Alex:</strong> “Baru sampai. Besok duduk bareng pas istirahat, yuk?”</p><p>Ajakan sederhana itu membuatmu menunggu hari esok sedikit lebih cepat.</p>';
+if(n===3)txt='<p>Kamu menaruh ponsel dan mencoba fokus pada hal lain. Beberapa menit kemudian, layar menyala lagi.</p><p><strong>Alex:</strong> “Eh, jangan lupa PR Bahasa Indonesia ya. Kalau bingung, tanya aku.”</p><p>Kamu tertawa pelan. Sepertinya Alex menemukan alasan baru untuk memulai percakapan.</p>';
+body.innerHTML='<div class="episode-tag">EPISODE 01 · PILIHANMU</div><h2>Hari yang berbeda</h2>'+txt+'<p><strong>Apa yang kamu lakukan selanjutnya?</strong></p><button class="choice" onclick="openApp('chat')">Balas Alex di WhatsApp 💬</button><button class="choice" onclick="nextEpisode()">Lanjutkan cerita →</button><button class="choice" onclick="resetStory()">Ulangi pilihan</button>';
+localStorage.setItem('au_choice',String(n));}
+function nextEpisode(){let body=document.getElementById('storyBody');body.innerHTML='<div class="episode-tag">EPISODE 02 · BESOK PAGI</div><h2>Bangku di sebelahmu</h2><p>Pagi berikutnya, kamu datang ke kelas dan menemukan sebuah catatan kecil di atas mejamu.</p><p>“Simpan tempat di sebelahmu, ya. — Alex”</p><p>Tak lama kemudian, Alex muncul di pintu kelas sambil membawa dua kotak susu.</p><p><strong>Pilihanmu:</strong></p><button class="choice" onclick="episodeTwo(1)">Senyum dan simpan tempat untuknya.</button><button class="choice" onclick="episodeTwo(2)">Godain dia soal catatan kecil itu.</button><button class="choice" onclick="episodeTwo(3)">Tanya kenapa bawa dua susu.</button>';localStorage.setItem('au_episode','2')}
+function episodeTwo(n){let a=['Kamu tersenyum dan menggeser tas dari kursi sebelah. Alex duduk sambil berkata, “Makasih. Aku memang berharap kamu datang lebih awal.”','Kamu mengangkat catatan itu sambil tersenyum jahil. Alex menggaruk kepala. “Ketahuan, ya? Aku cuma mau duduk dekat kamu.”','Kamu menunjuk dua kotak susu. Alex menyodorkan satu padamu. “Yang ini buat kamu. Anggap aja ucapan terima kasih karena kemarin nemenin aku ngobrol.”'];document.getElementById('storyBody').innerHTML='<div class="episode-tag">EPISODE 02 · PILIHANMU</div><h2>Awal yang manis</h2><p>'+a[n-1]+'</p><p>Bel masuk berbunyi, tetapi kamu merasa cerita kalian baru saja dimulai.</p><button class="choice" onclick="openApp('chat')">Lihat pesan Alex 💬</button><button class="choice" onclick="nextEpisode()">Lanjutkan →</button>';localStorage.setItem('au_ep2_choice',String(n))}
+function resetStory(){localStorage.removeItem('au_choice');localStorage.removeItem('au_episode');location.reload()}
+function saveSettings(){let name=document.getElementById('nameInput').value.trim()||'Kamu';localStorage.setItem('au_name',name);let w=document.getElementById('wallpaperSelect').value;let maps={pastel:'linear-gradient(145deg,#f9d5e5 0%,#d6d8ff 48%,#b8e8e5 100%)',sunset:'linear-gradient(145deg,#ffcf9f,#ff9eb7 48%,#b5a6ef)',night:'linear-gradient(145deg,#111d45,#464d88 48%,#8b9fce)',rose:'linear-gradient(145deg,#f4b9c8,#e8b6d5 48%,#d7c6fa)'};document.documentElement.style.setProperty('--wallpaper',maps[w]);localStorage.setItem('au_wallpaper',w);document.querySelector('.welcome').textContent='Halo, '+name+' ✨';toast('Pengaturan disimpan','Nama dan wallpaper berhasil diperbarui.')}
+let savedName=localStorage.getItem('au_name');if(savedName){document.getElementById('nameInput').value=savedName;document.querySelector('.welcome').textContent='Halo, '+savedName+' ✨'}
+let savedWallpaper=localStorage.getItem('au_wallpaper');if(savedWallpaper){document.getElementById('wallpaperSelect').value=savedWallpaper;document.getElementById('wallpaperSelect').dispatchEvent(new Event('change'));let maps={pastel:'linear-gradient(145deg,#f9d5e5 0%,#d6d8ff 48%,#b8e8e5 100%)',sunset:'linear-gradient(145deg,#ffcf9f,#ff9eb7 48%,#b5a6ef)',night:'linear-gradient(145deg,#111d45,#464d88 48%,#8b9fce)',rose:'linear-gradient(145deg,#f4b9c8,#e8b6d5 48%,#d7c6fa)'};document.documentElement.style.setProperty('--wallpaper',maps[savedWallpaper])}
+document.getElementById('wallpaperSelect').addEventListener('change',()=>{});
+</script>
+</body>
+</html>
